@@ -5,4 +5,8 @@ target
 tmp
 dist
 .cache
-.idea
+/.idea
+/.idea_modules
+/.classpath
+/.gradle
+/.settings

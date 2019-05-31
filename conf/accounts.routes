@@ -1,0 +1,4 @@
+
+POST    /                       controllers.AccountController.create(request: Request)
+
+GET     /:id                    controllers.AccountController.show(id: Long)

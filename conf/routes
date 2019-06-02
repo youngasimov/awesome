@@ -3,11 +3,16 @@
 # ~~~~
 
 # An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
-
-->     /v1/accounts                 accounts.Routes
-
-->     /v1/transactions             transactions.Routes
+GET     /                               controllers.HomeController.index
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET     /assets/*file                   controllers.Assets.versioned(path="/public", file: Asset)
+
+GET     /v1/accounts                    controllers.AccountController.index()
+
+GET     /v1/accounts/:id                controllers.AccountController.show(id: Long, from ?= null)
+
+POST    /v1/accounts                    controllers.AccountController.create(request: Request)
+
+POST    /v1/transactions                controllers.TransactionController.create(request: Request)
+

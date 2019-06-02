@@ -1,13 +1,21 @@
 package models;
 
 
+import com.fasterxml.jackson.annotation.*;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-@Entity
 @SuppressWarnings({"WeakerAccess", "unused"})
-public class Account{
+@Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,17 +26,33 @@ public class Account{
     public String name;
 
     @Basic
-    public double balance;
+    @Column(name = "created_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSS")
+    public LocalDateTime createdAt;
 
     @Basic
-    @Column(name = "balance_at")
-    public LocalDateTime balanceAt;
+    @Column(name = "updated_at")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "uuuu-MM-dd'T'HH:mm:ss.SSS")
+    public LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "sender")
-    public Set<Transaction> debits;
+    @Basic
+    public double balance;
 
-    @OneToMany(mappedBy = "receiver")
-    public Set<Transaction> credits;
+    @Transient
+    public double initialDeposit;
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JsonIgnore
+    public Set<Transaction> debits = new HashSet<>();
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JsonIgnore
+    public Set<Transaction> credits = new HashSet<>();
+
+
+    @Transient
+    @JsonManagedReference
+    public List<Transaction> transactions = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -46,21 +70,44 @@ public class Account{
         this.name = name;
     }
 
+    @JsonProperty
     public double getBalance() {
         return balance;
     }
 
+    @JsonIgnore
     public void setBalance(double balance) {
         this.balance = balance;
     }
 
-    @Column(name = "balance_at")
-    public LocalDateTime getBalanceAt() {
-        return balanceAt;
+    @JsonProperty
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setBalanceAt(LocalDateTime balanceAt) {
-        this.balanceAt = balanceAt;
+    @JsonIgnore
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @JsonProperty
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    @JsonIgnore
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    @JsonIgnore
+    public double getInitialDeposit() {
+        return initialDeposit;
+    }
+
+    @JsonProperty
+    public void setInitialDeposit(double initialDeposit) {
+        this.initialDeposit = initialDeposit;
     }
 
     public Set<Transaction> getDebits() {
@@ -79,13 +126,24 @@ public class Account{
         this.credits = credits;
     }
 
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    @JsonIgnore
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
     public void addCredit(Transaction transaction) {
         transaction.setReceiver(this);
         this.credits.add(transaction);
+        this.transactions.add(transaction);
     }
 
     public void addDebit(Transaction transaction) {
         transaction.setSender(this);
         this.debits.add(transaction);
+        this.transactions.add(transaction);
     }
 }

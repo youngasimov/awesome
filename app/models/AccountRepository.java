@@ -2,17 +2,19 @@ package models;
 
 import com.google.inject.ImplementedBy;
 
-import java.time.Duration;
-import java.util.concurrent.CompletionStage;
+import javax.persistence.EntityManager;
+import java.time.LocalDateTime;
+import java.util.stream.Stream;
 
 @ImplementedBy(JPAAccountRepository.class)
-public interface AccountRepository {
+public interface AccountRepository extends BaseRepository {
 
-    CompletionStage<Account> createAccount(Account account);
+    Account create(Account account, EntityManager em);
 
-    CompletionStage<Account> getAccount(long id);
+    Stream<Account> get(EntityManager em);
 
-    CompletionStage<Account> getAccount(long id, boolean withNewTransactions);
+    Account find(long id, boolean withTransactions, EntityManager em);
 
-    CompletionStage<Account> updateAccountAsync(Account account, Duration timeout);
+    Account find(long id, LocalDateTime transactionsFrom, EntityManager em);
+
 }

@@ -26,9 +26,4 @@ public class DatabaseExecutionContext implements ExecutionContextExecutor {
     public void reportFailure(Throwable cause) {
         executionContext.reportFailure(cause);
     }
-
-    @Override
-    public ExecutionContext prepare() {
-        return executionContext.prepare();
-    }
 }

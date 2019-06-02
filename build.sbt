@@ -11,6 +11,7 @@ libraryDependencies += guice
 libraryDependencies += javaJpa
 libraryDependencies += "com.h2database" % "h2" % "1.4.197"
 libraryDependencies += "org.hibernate" % "hibernate-core" % "5.4.3.Final"
+libraryDependencies += "com.fasterxml.jackson.datatype" % "jackson-datatype-hibernate5" % "2.9.9"
 
 libraryDependencies += javaWs % "test"
 
@@ -19,7 +20,10 @@ libraryDependencies += "org.assertj" % "assertj-core" % "3.11.1" % "test"
 libraryDependencies += "org.mockito" % "mockito-core" % "2.23.4" % "test"
 
 Test / testOptions += Tests.Argument(TestFrameworks.JUnit, "-a", "-v")
+Test / javaOptions += "-Dconfig.file=conf/test.conf"
 
 ThisBuild / javacOptions ++= List("-Xlint:unchecked", "-Xlint:deprecation", "-Werror")
+
+PlayKeys.externalizeResources := false
 
 PlayKeys.externalizeResourcesExcludes += baseDirectory.value / "conf" / "META-INF" / "persistence.xml"

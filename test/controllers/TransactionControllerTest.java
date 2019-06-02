@@ -76,5 +76,17 @@ public class TransactionControllerTest extends WithApplication {
                 "}"));
         result = route(app, request);
         assertEquals(NOT_ACCEPTABLE, result.status());
+
+        Account processedAccount1 = accountRepository
+                .withTransaction(em -> accountRepository.find(account1.getId(), true, em))
+                .toCompletableFuture().get();
+
+        Account processedAccount2 = accountRepository
+                .withTransaction(em -> accountRepository.find(account2.getId(), true, em))
+                .toCompletableFuture().get();
+
+        assertEquals(145, processedAccount1.getBalance(), 0.001);
+        assertEquals(155, processedAccount2.getBalance(), 0.001);
+
     }
 }
